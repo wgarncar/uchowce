@@ -20,9 +20,9 @@ if __name__ == "__main__":
 
     model = Sequential()
     model.add(Dense(output_dim=10, init='uniform', activation='relu', input_dim=7))
-    model.add(Dropout(0.5))
-    model.add(Dense(output_dim=6, init='uniform', activation='relu'))
-    model.add(Dropout(0.5))
+    #model.add(Dropout(0.5))
+    #model.add(Dense(output_dim=5, init='uniform', activation='relu'))
+    #model.add(Dropout(0.5))
     model.add(Dense(output_dim=1, init='uniform', activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy',
@@ -36,11 +36,11 @@ if __name__ == "__main__":
 
     licz = 0
     for i in range(len(X_test)):
-        n = scores[i]*100
-        p = round(n)
-        print("{}, {}".format(n, p))
+        #n = scores[i]*100
+        #p = round(n)
+        #print("{}, {}".format(n, p))
 
-        if(Y_test[i] == scores[i]*100):
+        if(Y_test[i] == int(scores[i]*100)):
             licz += 1
 
     print("Trafnych wyników: ", licz)
