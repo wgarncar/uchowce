@@ -6,7 +6,15 @@ from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
 
+
+def maxf(tab):
+    m=tab[0]
+    for i in tab: #pętla for w Pythonie to bardziej "foreach"
+        if i>m:   #i przyjmuje wartości kolejnych komórek tablicy tab
+            m=i
+    return m
 
 if __name__ == "__main__":
 
@@ -24,12 +32,12 @@ if __name__ == "__main__":
 
     model = Sequential() #stworzenie sieci neuronowej
     #in
-    model.add(Dense(50, init='uniform', activation='relu', input_dim=7)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
+    model.add(Dense(100, init='uniform', activation='relu', input_dim=7)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
     #extra
     model.add(Dropout(0.3, noise_shape=None, seed=None))
-    model.add(Dense(50, init='uniform', activation='relu')) #dodatkowa warstwa
+    model.add(Dense(100, init='uniform', activation='relu')) #dodatkowa warstwa
     model.add(Dropout(0.2, noise_shape=None, seed=None))
-    model.add(Dense(50, init='uniform', activation='relu')) #dodatkowa warstwa
+    #model.add(Dense(50, init='uniform', activation='relu')) #dodatkowa warstwa
     #Out
     model.add(Dense(1, init='uniform', activation='sigmoid')) # warstwa wyjściowa 1 neuron, funkcja sigmoidalna
     model.summary()
@@ -56,13 +64,49 @@ if __name__ == "__main__":
     #print("Wiek oczekiwany: \n{} \nWiek otrzymany: \n{}".format(Y, scores*100))
 
     licz = 0
+    max = 35
+    tab1 = [0] * max
+    tab2 = [0] * max
+    licznik = [0] * max
+    bladsr = 0
+    for i in range(max):
+        licznik[i] = i
     for i in range(len(rounded)):
         n = Y[i]
         p = rounded[i]
-        print("{}, {}".format(n, predictions[i]*100))
+        print("{}, {}".format(n, p))
+        blad = n - p
+        bladsr += abs(blad)
 
-        #if n == p:
-        if n == math.floor(predictions[i]*100) or n == math.ceil(predictions[i]*100): #hehe wiecej procent
+        if n == p:
+        #if n == math.floor(predictions[i]*100) or n == math.ceil(predictions[i]*100): #hehe wiecej procent
             licz += 1
+        tmpn = (int)(n)
+        tmpp = (int)(p)
+        tab1[tmpn] += 1
+        tab2[tmpp] += 1
+
+    bladsr = bladsr/len(rounded)
 
     print("Trafnych wyników: %.2f%%" % (licz/len(rounded)*100))
+    print("Błąd średni: ", bladsr)
+
+    plt.figure(figsize=(25, 25))
+    plt.subplot(211)
+    plt.bar(licznik, tab1)
+    plt.title('Oczekiwane wyniki')
+    plt.subplot(212)
+    plt.bar(licznik, tab2)
+    plt.title('Otrzymane wyniki')
+    plt.savefig('plotY+P.pdf')
+    plt.close()
+
+
+    plt.figure(figsize=(25, 25))
+    plt.plot(licznik, tab1)
+    plt.plot(licznik, tab2)
+    plt.title('Porównanie wyników')
+    plt.savefig('plotBoth.pdf')
+    plt.close()
+
+
