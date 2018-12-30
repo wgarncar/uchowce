@@ -6,6 +6,8 @@ from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 
 
@@ -20,11 +22,11 @@ if __name__ == "__main__":
 
     data1 = pd.read_csv("data1")
     data1.head()
+    """
+    X = data1.iloc[:, [0, 1, 2, 3, 4, 5, 6, 7]].values #pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
+    Y = data1.iloc[:, [8]].values #ilość ringów to nasz oczekiwany wynik
 
-    X = data1.iloc[:, [0, 1, 2, 3, 4, 5, 6,
-                       7]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
-    Y = data1.iloc[:, [8]].values  # ilość ringów to nasz oczekiwany wynik
-
+    print("X: ", len(X), X)
     for i in range(4177):
         print(X[i][0])
         if X[i][0] == "M":
@@ -33,6 +35,24 @@ if __name__ == "__main__":
             X[i][0] = 2
         elif X[i][0] == 'I':
             X[i][0] = 3
+
+    print("X: ", X)
+
+    model2 = LogisticRegression()
+    rfe = RFE(model2, 1)
+    fit = rfe.fit(X, Y)
+    print("Feature Ranking: {}".format(fit.ranking_))
+
+    """
+
+    #Ranking danych: [6 1 5 8 2 3 7 4]
+
+    X = data1.iloc[:, [1, 4, 5]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
+    Y = data1.iloc[:, [8]].values  # ilość ringów to nasz oczekiwany wynik
+    
+
+
+
     #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2) #ostanie 0.2 calych danych to dane do testów
 
     #sc = StandardScaler()
@@ -41,10 +61,10 @@ if __name__ == "__main__":
 
     model = Sequential() #stworzenie sieci neuronowej
     #in
-    model.add(Dense(100, init='uniform', activation='relu', input_dim=8)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
+    model.add(Dense(30, init='uniform', activation='relu', input_dim=3)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
     #extra
     model.add(Dropout(0.3, noise_shape=None, seed=None))
-    model.add(Dense(100, init='uniform', activation='relu')) #dodatkowa warstwa
+    model.add(Dense(20, init='uniform', activation='relu')) #dodatkowa warstwa
     model.add(Dropout(0.2, noise_shape=None, seed=None))
     #model.add(Dense(50, init='uniform', activation='relu')) #dodatkowa warstwa
     #Out
@@ -54,6 +74,8 @@ if __name__ == "__main__":
     #ustawienia sieci
     model.compile(loss='mean_squared_error', # binary_crossentropy ?
               optimizer='adam')
+
+
 
     #after 3 epochs in a row in which the model doesn’t improve, training will stop
     early_stopping_monitor = EarlyStopping(patience=3)
@@ -83,7 +105,7 @@ if __name__ == "__main__":
     for i in range(len(rounded)):
         n = Y[i]
         p = rounded[i]
-        print("{}, {}".format(n, p))
+        #print("{}, {}".format(n, p))
         blad = n - p
         bladsr += abs(blad)
 
@@ -107,7 +129,7 @@ if __name__ == "__main__":
     plt.subplot(212)
     plt.bar(licznik, tab2)
     plt.title('Otrzymane wyniki')
-    plt.savefig('plotY+P.pdf')
+    plt.savefig('selected_plotY+P.pdf')
     plt.close()
 
 
@@ -115,7 +137,9 @@ if __name__ == "__main__":
     plt.plot(licznik, tab1)
     plt.plot(licznik, tab2)
     plt.title('Porównanie wyników')
-    plt.savefig('plotBoth.pdf')
+    plt.savefig('selected_plotBoth.pdf')
     plt.close()
+    #"""
+
 
 
