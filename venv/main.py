@@ -21,8 +21,7 @@ if __name__ == "__main__":
     data1 = pd.read_csv("data1")
     data1.head()
 
-    X = data1.iloc[:, [0, 1, 2, 3, 4, 5, 6,
-                       7]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
+    X = data1.iloc[:, [0, 1, 2, 3, 4, 5, 6, 7]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
     Y = data1.iloc[:, [8]].values  # ilość ringów to nasz oczekiwany wynik
 
     for i in range(4177):

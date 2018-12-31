@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     #Ranking danych: [6 1 5 8 2 3 7 4]
 
-    X = data1.iloc[:, [0, 2, 3, 7, 8]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
+    X = data1.iloc[:, [0, 1, 2, 4, 5, 7]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
     Y = data1.iloc[:, [8]].values  # ilość ringów to nasz oczekiwany wynik
     
     for i in range(4177):
@@ -68,10 +68,10 @@ if __name__ == "__main__":
 
     model = Sequential() #stworzenie sieci neuronowej
     #in
-    model.add(Dense(100, init='uniform', activation='relu', input_dim=5)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
+    model.add(Dense(75, init='uniform', activation='relu', input_dim=6)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
     #extra
     model.add(Dropout(0.3, noise_shape=None, seed=None))
-    model.add(Dense(100, init='uniform', activation='relu')) #dodatkowa warstwa
+    model.add(Dense(75, init='uniform', activation='relu')) #dodatkowa warstwa
     model.add(Dropout(0.2, noise_shape=None, seed=None))
     #model.add(Dense(50, init='uniform', activation='relu')) #dodatkowa warstwa
     #Out
