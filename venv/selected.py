@@ -47,10 +47,17 @@ if __name__ == "__main__":
 
     #Ranking danych: [6 1 5 8 2 3 7 4]
 
-    X = data1.iloc[:, [1, 4, 5]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
+    X = data1.iloc[:, [0, 2, 3, 7, 8]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
     Y = data1.iloc[:, [8]].values  # ilość ringów to nasz oczekiwany wynik
     
-
+    for i in range(4177):
+        print(X[i][0])
+        if X[i][0] == "M":
+            X[i][0] = 1
+        elif X[i][0] == 'F':
+            X[i][0] = 2
+        elif X[i][0] == 'I':
+            X[i][0] = 3
 
 
     #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2) #ostanie 0.2 calych danych to dane do testów
@@ -61,10 +68,10 @@ if __name__ == "__main__":
 
     model = Sequential() #stworzenie sieci neuronowej
     #in
-    model.add(Dense(30, init='uniform', activation='relu', input_dim=3)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
+    model.add(Dense(100, init='uniform', activation='relu', input_dim=5)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
     #extra
     model.add(Dropout(0.3, noise_shape=None, seed=None))
-    model.add(Dense(20, init='uniform', activation='relu')) #dodatkowa warstwa
+    model.add(Dense(100, init='uniform', activation='relu')) #dodatkowa warstwa
     model.add(Dropout(0.2, noise_shape=None, seed=None))
     #model.add(Dense(50, init='uniform', activation='relu')) #dodatkowa warstwa
     #Out
@@ -81,7 +88,7 @@ if __name__ == "__main__":
     early_stopping_monitor = EarlyStopping(patience=3)
 
     #validation split at 0.4, which means that 40% of the training data we provide in the model will be set aside for testing model performance
-    model.fit(X, Y/100, batch_size=5, epochs=150, validation_split=0.2, callbacks=[early_stopping_monitor])
+    model.fit(X, Y/100, batch_size=5, epochs=150, validation_split=0.3, callbacks=[early_stopping_monitor])
 
     #scores = model.evaluate(X, Y/100, batch_size=10)
     #print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))

@@ -59,7 +59,7 @@ if __name__ == "__main__":
     early_stopping_monitor = EarlyStopping(patience=3)
 
     #validation split at 0.4, which means that 40% of the training data we provide in the model will be set aside for testing model performance
-    model.fit(X, Y/100, batch_size=5, epochs=150, validation_split=0.2, callbacks=[early_stopping_monitor])
+    model.fit(X, Y/100, batch_size=5, epochs=150, validation_split=0.3, callbacks=[early_stopping_monitor])
 
     #scores = model.evaluate(X, Y/100, batch_size=10)
     #print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
