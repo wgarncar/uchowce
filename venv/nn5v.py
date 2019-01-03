@@ -21,11 +21,10 @@ if __name__ == "__main__":
     data1 = pd.read_csv("data1")
     data1.head()
 
-    X = data1.iloc[:, [0, 1, 2, 3, 4, 5, 6, 7]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
+    X = data1.iloc[:, [0, 1, 2, 3, 4]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
     Y = data1.iloc[:, [8]].values  # ilość ringów to nasz oczekiwany wynik
 
     for i in range(4177):
-        #print(X[i][0])
         if X[i][0] == "M":
             X[i][0] = 1
         elif X[i][0] == 'F':
@@ -40,7 +39,7 @@ if __name__ == "__main__":
 
     model = Sequential() #stworzenie sieci neuronowej
     #in
-    model.add(Dense(200, init='uniform', activation='relu', input_dim=8)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
+    model.add(Dense(200, init='uniform', activation='relu', input_dim=5)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
     #extra
     model.add(Dropout(0.3, noise_shape=None, seed=None))
     model.add(Dense(200, init='uniform', activation='relu')) #dodatkowa warstwa
@@ -52,30 +51,31 @@ if __name__ == "__main__":
 
     #ustawienia sieci
     model.compile(loss='mean_squared_error', # binary_crossentropy ?
-              optimizer='adam')
+                    optimizer='adam')
 
     #after 3 epochs in a row in which the model doesn’t improve, training will stop
     early_stopping_monitor = EarlyStopping(monitor="loss", patience=3)
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
-                                                        test_size=0.3)  # ostanie 0.3 calych danych to dane do testów
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)  # ostanie 0.3 calych danych to dane do testów
 
-    # validation split at 0.4, which means that 40% of the training data we provide in the model will be set aside for testing model performance
-    model.fit(X_train, Y_train / 100, batch_size=5, epochs=150, verbose=0, callbacks=[early_stopping_monitor])
+    #validation split at 0.4, which means that 40% of the training data we provide in the model will be set aside for testing model performance
+    model.fit(X_train/100, Y_train/100, batch_size=5, epochs=150, verbose=0, callbacks=[early_stopping_monitor])
 
-    # scores = model.evaluate(X, Y/100, batch_size=10)
-    # print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
-    # scores = model.predict(X_test, batch_size=None, verbose=0, steps=None) #przewidywanie wyniku dla danych testowych
-    # scores = model.evaluate(X,Y);
-    # print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]))
-    predictions = model.predict(X_test)
+
+    #scores = model.evaluate(X, Y/100, batch_size=10)
+    #print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
+    #scores = model.predict(X_test, batch_size=None, verbose=0, steps=None) #przewidywanie wyniku dla danych testowych
+    #scores = model.evaluate(X,Y);
+    #print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]))
+    predictions = model.predict(X_test/100)
     rounded = [round(x[0]*100) for x in predictions]
     #print(rounded)
     #print("Wiek oczekiwany: \n{} \nWiek otrzymany: \n{}".format(Y, scores*100))
 
     licz = 0
-    max = 35
+    max = 40
     tab1 = [0] * max
     tab2 = [0] * max
     licznik = [0] * max
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     plt.subplot(212)
     plt.bar(licznik, tab2)
     plt.title('Otrzymane wyniki')
-    plt.savefig('plotY+P.pdf')
+    plt.savefig('5v_plotY+P.pdf')
     plt.close()
 
 
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     plt.plot(licznik, tab1)
     plt.plot(licznik, tab2)
     plt.title('Porównanie wyników')
-    plt.savefig('plotBoth.pdf')
+    plt.savefig('5_plotBoth.pdf')
     plt.close()
 
 

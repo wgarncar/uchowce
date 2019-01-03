@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     #Ranking danych: [6 1 5 8 2 3 7 4]
 
-    X = data1.iloc[:, [0, 1, 2, 4, 5, 7]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
+    X = data1.iloc[:, [1, 4, 5, 7]].values  # pominąłem płeć i ilość ringow (płeć, bo char pierdolił trochę zabawe, trzeba będzie zamienić chara na inta później)
     Y = data1.iloc[:, [8]].values  # ilość ringów to nasz oczekiwany wynik
     
     for i in range(4177):
@@ -68,10 +68,10 @@ if __name__ == "__main__":
 
     model = Sequential() #stworzenie sieci neuronowej
     #in
-    model.add(Dense(75, init='uniform', activation='relu', input_dim=6)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
+    model.add(Dense(200, init='uniform', activation='relu', input_dim=4)) #dodanie warstwy wejsiowej - 7 elementów, oraz na wyjsciu (1 ukryta) - 10 elementów
     #extra
     model.add(Dropout(0.3, noise_shape=None, seed=None))
-    model.add(Dense(75, init='uniform', activation='relu')) #dodatkowa warstwa
+    model.add(Dense(200, init='uniform', activation='relu')) #dodatkowa warstwa
     model.add(Dropout(0.2, noise_shape=None, seed=None))
     #model.add(Dense(50, init='uniform', activation='relu')) #dodatkowa warstwa
     #Out
@@ -85,18 +85,21 @@ if __name__ == "__main__":
 
 
     #after 3 epochs in a row in which the model doesn’t improve, training will stop
-    early_stopping_monitor = EarlyStopping(patience=3)
+    early_stopping_monitor = EarlyStopping(monitor="loss", min_delta=0.01, patience=3)
 
-    #validation split at 0.4, which means that 40% of the training data we provide in the model will be set aside for testing model performance
-    model.fit(X, Y/100, batch_size=5, epochs=150, validation_split=0.3, callbacks=[early_stopping_monitor])
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
+                                                        test_size=0.3)  # ostanie 0.3 calych danych to dane do testów
 
-    #scores = model.evaluate(X, Y/100, batch_size=10)
-    #print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    # validation split at 0.4, which means that 40% of the training data we provide in the model will be set aside for testing model performance
+    model.fit(X_train, Y_train / 100, batch_size=5, epochs=150, verbose=0, callbacks=[early_stopping_monitor])
 
-    #scores = model.predict(X_test, batch_size=None, verbose=0, steps=None) #przewidywanie wyniku dla danych testowych
-    #scores = model.evaluate(X,Y);
-    #print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]))
-    predictions = model.predict(X)
+    # scores = model.evaluate(X, Y/100, batch_size=10)
+    # print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
+    # scores = model.predict(X_test, batch_size=None, verbose=0, steps=None) #przewidywanie wyniku dla danych testowych
+    # scores = model.evaluate(X,Y);
+    # print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]))
+    predictions = model.predict(X_test)
     rounded = [round(x[0]*100) for x in predictions]
     #print(rounded)
     #print("Wiek oczekiwany: \n{} \nWiek otrzymany: \n{}".format(Y, scores*100))
@@ -110,7 +113,7 @@ if __name__ == "__main__":
     for i in range(max):
         licznik[i] = i
     for i in range(len(rounded)):
-        n = Y[i]
+        n = Y_test[i]
         p = rounded[i]
         #print("{}, {}".format(n, p))
         blad = n - p
